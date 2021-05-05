@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import {Input} from "antd"
+import { useEffect} from "react";
+import { Input } from "antd";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,25 +8,28 @@ import {
   selectorSelect,
   displayFruit,
   deleteAllFruits,
-  searchFruit
+  findFruits,
+  dispFruit,
+  deleteEach,
 } from "./Action/fruits";
-
 import "antd/dist/antd.css";
-import _ from "lodash";
-const{Search}=Input
+import { AudioOutlined } from '@ant-design/icons'
+import './App.css';
+const { Search } = Input;
 
 const App = () => {
   const dispatch = useDispatch();
   const chose: Array<any> = useSelector(selectorSelect);
-
   const fruits = useSelector(displayFruit);
 
   useEffect(() => {
     console.log(chose);
   }, [chose]);
-useEffect(()=>{
-  console.log(fruits)
-},[fruits])
+
+  useEffect(() => {
+    console.log(fruits);
+  }, [fruits]);
+
   const handleClick = (e: any) => {
     deleteFruits(dispatch, e);
   };
@@ -35,45 +38,56 @@ useEffect(()=>{
     pickFruits(dispatch, e);
   };
 
-  const handleClickAll=(e:any)=>{
-   deleteAllFruits(dispatch,e);
-  }
+  const handleClickAll = (e: any) => {
+    deleteAllFruits(dispatch, e);
+  };
 
-  const handleSearch=(e:any)=>{
-   console.log("search",e)
-     searchFruit(dispatch,e)
-  }
+  const searchData = (e: any) => {
+    findFruits(dispatch, e);
+  };
+
+  const goBack = () => {
+    dispFruit(dispatch);
+  };
+
+  const handleDeleteEach = (e: any) => {
+    deleteEach(dispatch, e);
+  };
   return (
-    <section>
-      <div>
+    <section >
+      <div id="image" style={{width:1500,height:300}}><h1>GROCERY SHOP</h1>
+      </div>
+      <br></br>
+      <br></br>
+      <div id="list">
+        <Search style={{width:500,float:"left",border:"1px solid black"
+       }}onSearch={(e) => searchData(e)} onChange={goBack}></Search>
+     
+        <br></br>
+        <br></br>
         <h1>LIST</h1>
         {fruits.map((fruit: any) => (
           <p
             onClick={() => {
               handleChange(fruit);
             }}
-          >
-            <PlusCircleFilled />
-            {fruit.name}
+          >  
+           <li><PlusCircleFilled />{fruit.name}</li> 
           </p>
         ))}
       </div>
-      <div>
-        <h1>BASKET</h1>
-        <DeleteOutlined onClick={handleClickAll} />
+      <div id="basket">
+        <h1>BASKET  <DeleteOutlined onClick={handleClickAll} /></h1>
         {chose.map((fruit) => (
           <p onClick={() => handleClick(fruit)}>
-            {fruit.name} ({fruit.count})
+            <DeleteOutlined onClick={() => handleDeleteEach(fruit)} />
+           <li> {fruit.name} ({fruit.count})</li>
           </p>
         ))}
       </div>
-      <div>
-      <Search onSearch={handleSearch}></Search>
-        {fruits.map((fruits:any)=>
-        <p>{fruits.name}</p>)}
-        
-      </div>
+      
+      
     </section>
-  )
+  );
 };
 export default App;
